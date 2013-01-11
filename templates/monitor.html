@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plant Control</title>
+    <!-- Bootstrap -->
+    <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+    <script src="{{ STATIC_URL }}js/graph.js"></script>
+    <script>
+        var graphHourHumidity = 0;
+        var graphDayHumidity = 0;
+
+        var graphHourLight = 0;
+        var graphDayLight = 0;
+
+        var graphHourTemperature = 0;
+        var graphDayTemperature = 0;
+
+        $(window).load(function() {             
+            graphHourHumidity = new Graph("#hourlyhumidity", 12, 10);
+            graphDayHumidity = new Graph("#dailyhumidity", 20, 20);
+            graphHourLight = new Graph("#hourlylight", 15, 15);
+            graphDayLight = new Graph("#dailylight", 20, 20);
+            graphHourTemperature = new Graph("#hourlytemperature", 15, 15);
+            graphDayTemperature = new Graph("#dailytemperature", 20, 20);
+            graphHourHumidity.drawGraph([0.0, 0.1, 0.15, 0.4, 0.7,0.0, 0.1, 0.2, 0.3, 0.1,0.0, 0.1, 0.2]);
+        });
+
+        $(window).resize(function(){
+            graphHourHumidity.update();
+            graphDayHumidity.update();
+            graphHourLight.update();
+            graphDayLight.update();
+            graphHourTemperature.update();
+            graphDayTemperature.update();
+
+            graphHourHumidity.drawGraph([0.0, 0.1, 0.15, 0.4, 0.7,0.0, 0.1, 0.2, 0.3, 0.1,0.0, 0.1, 0.2]);
+        });
+    </script>
+
+
+  </head>
+  <body>
+
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Plant Control</a>
+        <ul class="nav">
+          <li class="active"><a href="#">Monitor</a></li>
+          <li><a href="#">Control</a></li>
+          <li><a href="#">About</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <li class="nav-header"> Data </li>
+                        <li> <a href="#humidity"> Humidity </a> </li>
+                        <li> <a href="#light"> Light </a> </li>
+                        <li> <a href="#temperature"> Temperature </a> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="span9">
+                <div class="row-fluid">
+                    <div class="page-header" id="humidity">
+                        <h1> Humidity </h1>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="page-header">
+                                <h4> Hourly </h4> <small> 11:24 - now </small>
+                            </div>
+                            <canvas id="hourlyhumidity"> </canvas>
+                        </div>
+                        <div class="span6">
+                           <div class="page-header">
+                                <h4> Daily </h4> <small> Yesterday 12:24 - now </small>
+                            </div> 
+                            <canvas id="dailyhumidity"> </canvas>
+                        </div>
+                    </div>
+                 </div>
+
+
+                <div class="row-fluid">
+                    <div class="page-header" id="light">
+                        <h1> Light </h1>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="page-header">
+                                <h4> Hourly </h4> <small> 11:24 - now </small>
+                            </div>
+                            <canvas id="hourlylight"> </canvas>
+                        </div>
+                        <div class="span6">
+                           <div class="page-header">
+                                <h4> Daily </h4> <small> Yesterday 12:24 - now </small>
+                            </div> 
+                            <canvas id="dailylight"> </canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="page-header" id="temperature">
+                        <h1> Temperature </h1>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="page-header">
+                                <h4> Hourly </h4> <small> 11:24 - now </small>
+                            </div>
+                            <canvas id="hourlytemperature"> </canvas>
+                        </div>
+                        <div class="span6">
+                           <div class="page-header">
+                                <h4> Daily </h4> <small> Yesterday 12:24 - now </small>
+                            </div> 
+                            <canvas id="dailytemperature"> </canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+  </body>
+</html>
