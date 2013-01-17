@@ -11,7 +11,7 @@ int port = 8000;
 void setup(){
     Serial.begin(9600);
     String msg = "Hallo,";
-    generatePostMessage(&msg);
+    generatePostMessage(&msg, ["hoi", "hai", "blub"]);
     Serial.println(msg);
 }
 
@@ -19,8 +19,9 @@ void loop(){
 
 }
 
-void generatePostMessage(String * msg){
-  *msg = *msg + "hoi";
+void generatePostMessage(String * msg, String args[]){
+  for(int i =0; i<args.length; i++){
+    *msg = *msg + args[i];
   Serial.println(*msg);
 }
 
