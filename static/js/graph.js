@@ -1,5 +1,6 @@
-function Graph(canvasId, horDataPoints, vertDataPoints){
+function Graph(canvasId, graphType, horDataPoints, vertDataPoints){
     this.canvasId = canvasId;
+    this.graphType = graphType;
     this.horDataPoints = horDataPoints;
     this.vertDataPoints = vertDataPoints;
 
@@ -34,6 +35,8 @@ Graph.prototype.paintGrid = function(){
     ctx.stroke();
 } 
 
+
+//Functie die gecalled wordt om het grid te restoren
 Graph.prototype.update = function(){
     this.width = $(this.canvasId).parent().width();
     this.height = Math.floor(this.width * 0.7);
@@ -46,13 +49,39 @@ Graph.prototype.update = function(){
     this.graphWidth = (this.width - this.borderWidth*2);
     this.graphHeight =  (this.height - this.borderHeight*2); 
 
-    this.widthUnit = this.graphWidth / this.horDataPoints;
-    this.heightUnit = this.graphHeight / this.vertDataPoints;
+    this.widthUnit = this.graphWidth / (this.horDataPoints-1);
+    this.heightUnit = this.graphHeight / (this.vertDataPoints-1);
 
     this.paintGrid();
+
+    
+}
+
+//Functie die gecalled wordt als er een nieuw datapunt opgevraagd moet worden
+Graph.prototype.updateData = function(){
+    var me = this;
+
+    $.jsonRPC.request('getDataPoints', {
+        params: [1, me.horDataPoints],
+        success: function(result) {
+            console.log(result.result);
+            me.update();
+            me.drawGraph(result.result);
+        },
+        error: function(result) {
+            console.log(result);
+        }
+    });
+}
+
+Graph.prototype.onResize = function(){
+    this.update();
+    this.drawGraph(this.dataArray);
+
 }
 
 Graph.prototype.drawGraph = function(dataArray){
+    this.dataArray = dataArray;
     var ctx = $(this.canvasId).get(0).getContext('2d');
 
     ctx.strokeStyle = '#f00';

@@ -8,36 +8,42 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
     <script src="{{ STATIC_URL }}js/graph.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.jsonrpc.js"></script>
+    <script src="{{ STATIC_URL }}js/jquery.timer.js"></script>
     <script>
-        var graphHourHumidity = 0;
-        var graphDayHumidity = 0;
 
-        var graphHourLight = 0;
-        var graphDayLight = 0;
+        var graphs = 0;
 
-        var graphHourTemperature = 0;
-        var graphDayTemperature = 0;
+        $(window).load(function() { 
+            $.jsonRPC.setup({
+                endPoint: '/plantcontroller/jsonapi/',
+                namespace: ''
+            });
 
-        $(window).load(function() {             
-            graphHourHumidity = new Graph("#hourlyhumidity", 12, 10);
-            graphDayHumidity = new Graph("#dailyhumidity", 20, 20);
-            graphHourLight = new Graph("#hourlylight", 15, 15);
-            graphDayLight = new Graph("#dailylight", 20, 20);
-            graphHourTemperature = new Graph("#hourlytemperature", 15, 15);
-            graphDayTemperature = new Graph("#dailytemperature", 20, 20);
-            graphHourHumidity.drawGraph([0.0, 0.1, 0.15, 0.4, 0.7,0.0, 0.1, 0.2, 0.3, 0.1,0.0, 0.1, 0.2]);
+            graphs = [
+                new Graph("#hourlyhumidity", "humidity", 12, 10),
+                new Graph("#dailyhumidity", "humidity", 20, 20),
+                new Graph("#hourlylight", "light", 15, 15),
+                new Graph("#dailylight", "light", 20, 20),   
+                new Graph("#hourlytemperature", "temperature", 15, 15),
+                new Graph("#dailytemperature", "temperature", 20, 20)
+                ]
         });
 
         $(window).resize(function(){
-            graphHourHumidity.update();
-            graphDayHumidity.update();
-            graphHourLight.update();
-            graphDayLight.update();
-            graphHourTemperature.update();
-            graphDayTemperature.update();
-
-            graphHourHumidity.drawGraph([0.0, 0.1, 0.15, 0.4, 0.7,0.0, 0.1, 0.2, 0.3, 0.1,0.0, 0.1, 0.2]);
+            for (var i=0; i<graphs.length; i++){
+                graphs[i].onResize();
+            }
         });
+
+        var timer = $.timer(function() {
+            for (var i=0; i<graphs.length; i++){
+                graphs[i].updateData();
+            }
+        });
+
+        timer.set({ time : 5000, autostart : true });
+
     </script>
 
 
