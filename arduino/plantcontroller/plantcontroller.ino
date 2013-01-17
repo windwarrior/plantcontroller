@@ -9,15 +9,19 @@ int port = 8000
 Client client(server, port);
 
 void setup(){
-
+    Serial.begin(9600)
+    String msg = "Hallo,";
+    generatePostMessage(&msg);
+    Serial.println(msg);
 }
 
 void loop(){
 
 }
 
-void generatePostMessage(){
-  
+void generatePostMessage(String * msg){
+  String contentMsg = *msg;
+  contentMsg = contentMsg + " hoi";
   
 }
 
