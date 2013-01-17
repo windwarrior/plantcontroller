@@ -10,9 +10,12 @@ int port = 8000;
 
 void setup(){
     Serial.begin(9600);
+
     String msg = "Hallo,";
-    String args[] = {"hoi", "hai", "blub"};
-    generatePostMessage(&msg, args, 3);
+    String keys[] = {"key1", "key2", "key3"}
+    String vals[] = {"hoi", "hai", "blub"};
+    generatePostMessage(&msg, &keys, &vals, 3);
+
     Serial.println(msg);
 }
 
@@ -20,10 +23,11 @@ void loop(){
 
 }
 
-void generatePostMessage(String * msg, String args[], int len){
-  for(int i =0; i<len; i++){
-    *msg = *msg + args[i];
+void generatePostMessage(String * msg, String * keys[], String * vals[], int len){
+  for(int i =0; i<len-1; i++){
+    *msg = *msg + (*keys[i]).replace(" ", "+") + "=" + (*vals[i]).replace(" ", "+") + "&";
   }
+  *msg = *msg + (*keys[len-1]).replace(" ", "+") + "=" + (*vals[len-1]).replace(" ", "+");
   Serial.println(*msg);
 }
 
