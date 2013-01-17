@@ -19,7 +19,7 @@
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };
-IPAddress server(173,194,33,104); // Google
+IPAddress server(173,194,65,138); // Google
 
 // Initialize the Ethernet client library
 // with the IP address and port of the server 
