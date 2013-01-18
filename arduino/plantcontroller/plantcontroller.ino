@@ -29,7 +29,7 @@ void setup(){
       client.println("POST /plantcontroller/api/add/ HTTP/1.1");
       client.println("Host: 130.89.162.163");
       client.println("Connection: close");
-      //client.println("Content-Type: application/x-www-form-urlencoded");
+      client.println("Content-Type: application/x-www-form-urlencoded");
       client.println("Content-Length: 27");
       client.println();
       client.println("key1=hoi&key2=hai&key3=blub");      
