@@ -66,8 +66,9 @@ void measureHumidity(String * msg){
   String valReading = String(reading);
   String valSensor = "humidity";
   String valSamples = String(samples);
-  String vals[] = {valReading,valSensor,valSamples};
-  String keys[] = {"reading","sensortype","samples"};
+  String valSource = "arduinoProductie";
+  String vals[] = {valReading,valSensor,valSamples,valSource};
+  String keys[] = {"reading","sensortype","samples","source"};
   generatePostMessage(msg,keys,vals,3);
   Serial.println(*msg);
 }
