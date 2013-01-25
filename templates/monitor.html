@@ -20,13 +20,15 @@
                 namespace: ''
             });
 
+            $('#navbar').affix()
+
             graphs = [
-                new Graph("#hourlyhumidity", "humidity", 12, 10),
-                new Graph("#dailyhumidity", "humidity", 20, 20),
-                new Graph("#hourlylight", "light", 15, 15),
-                new Graph("#dailylight", "light", 20, 20),   
-                new Graph("#hourlytemperature", "temperature", 15, 15),
-                new Graph("#dailytemperature", "temperature", 20, 20)
+                new Graph("#hourlyhumidity", "humidity", 60, 10, 5, 0),
+                //new Graph("#dailyhumidity", "humidity", 12, 10, 1, 3),
+                //new Graph("#hourlylight", "light", 15, 15),
+                //new Graph("#dailylight", "light", 20, 20),   
+                //new Graph("#hourlytemperature", "temperature", 15, 15),
+                //new Graph("#dailytemperature", "temperature", 20, 20)
                 ]
         });
 
@@ -63,8 +65,8 @@
     
     <div class="container-fluid">
         <div class="row-fluid">
-            <div class="span3">
-                <div class="well sidebar-nav">
+            <div class="span2">
+                <div id="navbar" class="well">
                     <ul class="nav nav-list">
                         <li class="nav-header"> Data </li>
                         <li> <a href="#humidity"> Humidity </a> </li>
@@ -73,7 +75,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="span9">
+            <div class="span10">
                 <div class="row-fluid">
                     <div class="page-header" id="humidity">
                         <h1> Humidity </h1>

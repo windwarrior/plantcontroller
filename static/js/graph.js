@@ -1,6 +1,8 @@
-function Graph(canvasId, graphType, horDataPoints, vertDataPoints){
+function Graph(canvasId, graphType, horDataPoints, vertDataPoints, interval, offset){
     this.canvasId = canvasId;
     this.graphType = graphType;
+    this.interval = interval;
+    this.offset = offset;
     this.horDataPoints = horDataPoints;
     this.vertDataPoints = vertDataPoints;
 
@@ -62,7 +64,7 @@ Graph.prototype.updateData = function(){
     var me = this;
 
     $.jsonRPC.request('getDataPoints', {
-        params: [1, me.horDataPoints],
+        params: [me.interval, me.horDataPoints, me.offset],
         success: function(result) {
             console.log(result.result);
             me.update();

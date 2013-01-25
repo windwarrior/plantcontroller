@@ -6,11 +6,13 @@ UNITS = (
     ('c', 'celcius'),
     ('r', 'ohm'),
     ('l', 'lumen'),
+    ('u', 'undefined'),
 )
 
 SCALES = (
     ('l', 'linear'),
     ('e', 'exponential'),
+    ('u', 'undefined'),
 )
 
 """
@@ -65,7 +67,10 @@ class SensorType(models.Model):
     #The trigger that measures whether to enable the actuator related to this sensor
     #TODO: when triggered, is a cooldown required?
     #TODO: what about toggleable systems like heaters
-    trigger = models.ForeignKey(ActuatorTrigger)
+    trigger = models.ForeignKey(ActuatorTrigger, blank=True, null=True)
+
+    def __unicode__(self):
+        return unicode(self.name)
     
 """
 A single datapoint taken from a sensor
@@ -83,3 +88,10 @@ class SensorReading(models.Model):
 
     #what type of sensor is this, used to define scales and unit etc.
     sensortype = models.ForeignKey(SensorType)
+
+    #source
+    source = models.CharField(max_length=25)
+
+    def __unicode__(self):
+        date = self.datetime.strftime('%y-%m-%d %H:%M:%S')
+        return "[{0}] Reading {1}".format(date, self.reading)
