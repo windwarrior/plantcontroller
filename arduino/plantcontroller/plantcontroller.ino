@@ -18,6 +18,7 @@ void setup(){
     Serial.println("connecting..");
     
     Ethernet.begin(mac);
+    client.connect(server,port);
     delay(1000);
     if (!client.connected()) {
       Serial.println();
@@ -35,8 +36,9 @@ void loop(){
   unsigned long beginTime = millis();
   String humidityMsg = "";
   measureHumidity(&humidityMsg);
-  if(client.connect(server,port)){
+  if(client.connected()){
     Serial.println(humidityMsg.length());
+    Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
     client.println("Host: 130.89.162.163");
     client.println("Connection: close");
@@ -45,14 +47,18 @@ void loop(){
     client.println();
     client.println(humidityMsg);
   }  
-  if (client.available()) {
+  while (!client.available()){
+    ;//Loop om te wachten totdat er een bericht binnenkomt
+  }
+  while (client.available()) {
     char c = client.read();
     Serial.print(c);
   }
   //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd, moet altijd onderin de loop staan
   unsigned long endTime = millis();
-  if (endTime - beginTime < time) {
-    delay(endTime - beginTime);
+  unsigned long duration = endTime - beginTime;
+  if ((duration) < time) {
+    delay(time - duration);
   }
 }
 
@@ -69,8 +75,7 @@ void measureHumidity(String * msg){
   String valSource = "arduinoProductie";
   String vals[] = {valReading,valSensor,valSamples,valSource};
   String keys[] = {"reading","sensortype","samples","source"};
-  generatePostMessage(msg,keys,vals,3);
-  Serial.println(*msg);
+  generatePostMessage(msg,keys,vals,4);
 }
   
   
