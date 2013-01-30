@@ -40,21 +40,35 @@ void loop(){
     Serial.println(humidityMsg.length());
     Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
-    client.println("Host: 130.89.162.163");
-    client.println("Connection: close");
+    client.println("Host: 86.90.155.93");
+//    client.println("Connection: close");
     client.println("Content-Type: application/x-www-form-urlencoded");
     client.println("Content-Length: " + humidityMsg.length());
     client.println();
     client.println(humidityMsg);
-  }  
+  } else {
+    Serial.println("faal");
+  }
   while (!client.available()){
     ;//Loop om te wachten totdat er een bericht binnenkomt
   }
-  while (client.available()) {
-    char c = client.read();
-    Serial.print(c);
+  boolean reading = true;
+  char prev = ' ';
+  while (reading) {
+    if (client.available()){
+      char c = client.read();
+      Serial.print(c);
+      if (prev == c && c == '\n'){
+        Serial.println("debug1");
+        while(client.available()){
+          Serial.print(client.read());
+        }
+        reading = false;
+      }
+      prev = c;
+    }
   }
-  //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd, moet altijd onderin de loop staan
+  //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd. Moet altijd onderin de loop staan
   unsigned long endTime = millis();
   unsigned long duration = endTime - beginTime;
   if ((duration) < time) {
