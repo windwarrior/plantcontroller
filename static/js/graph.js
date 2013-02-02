@@ -12,17 +12,14 @@ function Graph(canvasId, graphType, horDataPoints, vertDataPoints, interval, off
 
 Graph.prototype.paintGrid = function(){
     var ctx = $(this.canvasId).get(0).getContext('2d');
-
     ctx.beginPath();
-    //ctx.rect(0,0,this.width, this.height);
 
     ctx.rect(this.borderWidth, this.borderHeight, this.graphWidth, this.graphHeight);
-    // hor
     ctx.stroke();
 
     ctx.beginPath();
-
     ctx.strokeStyle = "#777"
+    // hor
     for (var i=1; i<this.vertDataPoints; i++){
        ctx.moveTo(this.borderWidth, this.borderHeight + i * this.heightUnit)
        ctx.lineTo(this.width - this.borderWidth, this.borderHeight + i * this.heightUnit);
@@ -41,7 +38,7 @@ Graph.prototype.paintGrid = function(){
 //Functie die gecalled wordt om het grid te restoren
 Graph.prototype.update = function(){
     this.width = $(this.canvasId).parent().width();
-    this.height = Math.floor(this.width * 0.7);
+    this.height = Math.floor(this.width * 0.5);
 
     $(this.canvasId).attr('width', this.width).attr('height', this.height);
 
@@ -54,9 +51,9 @@ Graph.prototype.update = function(){
     this.widthUnit = this.graphWidth / (this.horDataPoints-1);
     this.heightUnit = this.graphHeight / (this.vertDataPoints-1);
 
-    this.paintGrid();
-
-    
+    this.paintGrid();  
+    this.paintVerticalLegenda();
+  
 }
 
 //Functie die gecalled wordt als er een nieuw datapunt opgevraagd moet worden
@@ -78,34 +75,32 @@ Graph.prototype.updateData = function(){
 
 Graph.prototype.onResize = function(){
     this.update();
-    this.drawGraph(this.dataArray);
 
+    this.drawGraph(this.dataDict);
 }
 
-Graph.prototype.drawGraph = function(dataArray){
-    this.dataArray = dataArray;
+Graph.prototype.drawGraph = function(dataDict){
+    this.dataDict = dataDict;
     var ctx = $(this.canvasId).get(0).getContext('2d');
 
     ctx.strokeStyle = '#f00';
     ctx.lineWidth = 3;
     ctx.beginPath();
 
-    if(dataArray.length > 0){
-        var yPos = (this.borderHeight + this.graphHeight) - (dataArray[0] * this.graphHeight);
+    if(dataDict && dataDict.length > 0){
+        var yPos = (this.borderHeight + this.graphHeight) - (dataDict[0]["datapoint"] * this.graphHeight);
         ctx.moveTo(this.borderWidth, yPos);
     
-        for(var j=1; j<dataArray.length; j++){
-            var newyPos = (this.borderHeight + this.graphHeight) - (dataArray[j] * this.graphHeight);
-            ctx.lineTo(this.borderWidth + j * this.widthUnit, newyPos);
-
-            
+        for(var j=1; j<dataDict.length; j++){
+            var newyPos = (this.borderHeight + this.graphHeight) - (dataDict[j]["datapoint"] * this.graphHeight);
+            ctx.lineTo(this.borderWidth + j * this.widthUnit, newyPos);            
         }
-        ctx.stroke();
-        
+
+        ctx.stroke();        
     }
 
-    for(var i=0; i<dataArray.length; i++){
-        var yPos = (this.borderHeight + this.graphHeight) - (dataArray[i] * this.graphHeight);
+    for(var i=0; i<dataDict.length; i++){
+        var yPos = (this.borderHeight + this.graphHeight) - (dataDict[i]["datapoint"] * this.graphHeight);
         ctx.beginPath();
         ctx.arc(this.borderWidth + i * this.widthUnit, yPos, this.widthUnit * 0.1, 0, Math.PI * 2);
         ctx.fillStyle = 'green';
@@ -115,48 +110,39 @@ Graph.prototype.drawGraph = function(dataArray){
         ctx.stroke();
     }
 
+    this.paintHorizontalLegenda(dataDict);
 }
- 
-    
-/*
 
-        function paintHorizontalLegenda(canvasId){
-            var width = $(canvasId).width();
-            var height = $(canvasId).height();
+Graph.prototype.paintVerticalLegenda = function(){
+    var ctx = $(this.canvasId).get(0).getContext('2d')
+    ctx.beginPath();
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'black';
+    ctx.textBaseline = 'middle';
 
-            var widthUnit = width / 12;
-            var heightUnit = height / 10;
+    var legendaUnit = 1.0/(this.vertDataPoints-1);
 
-            var ctx = $(canvasId).get(0).getContext('2d')
-            ctx.beginPath();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
+    for (var i=0; i<this.vertDataPoints; i++){
+        ctx.fillText((1.0 - i * legendaUnit).toFixed(2), 0.5 * this.borderWidth, this.heightUnit * (i) + this.borderHeight, this.widthUnit);
+    }
+    ctx.stroke();  
+}
 
-            for (var i=0; i<=8; i++){
-                ctx.fillText((8-i), widthUnit * 0.5, heightUnit * (i+1), widthUnit);
-            }
 
-            ctx.stroke();  
+Graph.prototype.paintHorizontalLegenda = function(dataDict){
+    var ctx = $(this.canvasId).get(0).getContext('2d');
+    ctx.beginPath();
+    ctx.textAlign = 'center';
+    ctx.strokeStyle = 'black';
+    ctx.fillStyle = 'black';
+    ctx.textBaseline = 'middle';
 
-        }
+    for (var i=0; i<this.dataDict.length; i++){
+        ctx.fillText(dataDict[i]["time"], this.widthUnit * (i) + this.borderWidth, this.height - 0.5 * this.borderHeight, this.widthUnit);
+    }
 
-        function paintVerticalLegenda(canvasId){
-            var width = $(canvasId).width();
-            var height = $(canvasId).height();
+    ctx.stroke();  
 
-            var widthUnit = width / 12;
-            var heightUnit = height / 10;
-
-            var ctx = $(canvasId).get(0).getContext('2d')
-            ctx.beginPath();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-
-            for (var i=0; i<=10; i++){
-                ctx.fillText((i), widthUnit * (i+1), heightUnit * (9.5), widthUnit);
-            }
-
-            ctx.stroke();  
-
-        }
-*/           
+}
+           
