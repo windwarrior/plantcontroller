@@ -18,6 +18,7 @@ void setup(){
     Serial.println("connecting..");
     
     Ethernet.begin(mac);
+    client.connect(server,port);
     delay(1000);
     if (!client.connected()) {
       Serial.println();
@@ -35,24 +36,43 @@ void loop(){
   unsigned long beginTime = millis();
   String humidityMsg = "";
   measureHumidity(&humidityMsg);
-  if(client.connect(server,port)){
+  if(client.connected()){
     Serial.println(humidityMsg.length());
+    Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
-    client.println("Host: 130.89.162.163");
-    client.println("Connection: close");
+    client.println("Host: 86.90.155.93");
+//    client.println("Connection: close");
     client.println("Content-Type: application/x-www-form-urlencoded");
     client.println("Content-Length: " + humidityMsg.length());
     client.println();
     client.println(humidityMsg);
-  }  
-  if (client.available()) {
-    char c = client.read();
-    Serial.print(c);
+  } else {
+    Serial.println("faal");
   }
-  //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd, moet altijd onderin de loop staan
+  while (!client.available()){
+    ;//Loop om te wachten totdat er een bericht binnenkomt
+  }
+  boolean reading = true;
+  char prev = ' ';
+  while (reading) {
+    if (client.available()){
+      char c = client.read();
+      Serial.print(c);
+      if (prev == c && c == '\n'){
+        Serial.println("debug1");
+        while(client.available()){
+          Serial.print(client.read());
+        }
+        reading = false;
+      }
+      prev = c;
+    }
+  }
+  //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd. Moet altijd onderin de loop staan
   unsigned long endTime = millis();
-  if (endTime - beginTime < time) {
-    delay(endTime - beginTime);
+  unsigned long duration = endTime - beginTime;
+  if ((duration) < time) {
+    delay(time - duration);
   }
 }
 
@@ -66,10 +86,10 @@ void measureHumidity(String * msg){
   String valReading = String(reading);
   String valSensor = "humidity";
   String valSamples = String(samples);
-  String vals[] = {valReading,valSensor,valSamples};
-  String keys[] = {"reading","sensortype","samples"};
-  generatePostMessage(msg,keys,vals,3);
-  Serial.println(*msg);
+  String valSource = "arduinoProductie";
+  String vals[] = {valReading,valSensor,valSamples,valSource};
+  String keys[] = {"reading","sensortype","samples","source"};
+  generatePostMessage(msg,keys,vals,4);
 }
   
   
