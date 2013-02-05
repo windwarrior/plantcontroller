@@ -9,11 +9,15 @@ int port = 8000;
 int humidityPin = A0;
 //De tijd die tussen twee loops zit
 unsigned long time = 5000;
+int timeToWater;//Tijd die het duurt totdat de plant water gegeven moet worden
+int limitToWater;//Limiet waaronder de plant water moet krijgen, indien 0 is er geen limiet.
 
 
 EthernetClient client;
 
 void setup(){
+    timeToWater = 32767; //Wordt hier op de maximale waarde van een integer geinitialiseerd
+    limitToWater = 0;
     Serial.begin(9600);
     Serial.println("connecting..");
     
@@ -40,32 +44,46 @@ void loop(){
     Serial.println(humidityMsg.length());
     Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
-    client.println("Host: 86.90.155.93");
+    client.println("Host: 130.89.165.27");
 //    client.println("Connection: close");
     client.println("Content-Type: application/x-www-form-urlencoded");
     client.println("Content-Length: " + humidityMsg.length());
     client.println();
     client.println(humidityMsg);
-  } else {
-    Serial.println("faal");
-  }
-  while (!client.available()){
+    while (!client.available()){
     ;//Loop om te wachten totdat er een bericht binnenkomt
-  }
-  boolean reading = true;
-  char prev = ' ';
-  while (reading) {
-    if (client.available()){
-      char c = client.read();
-      Serial.print(c);
-      if (prev == c && c == '\n'){
-        Serial.println("debug1");
-        while(client.available()){
-          Serial.print(client.read());
+    }
+    boolean reading = true;
+    char prev = ' ';
+    String inMsg = ""; 
+    while (reading) {
+      if (client.available()){
+        char c = client.read();
+        Serial.print(c);
+        if (prev == c && c == '\r'){
+          Serial.println("debug1");
+          while(client.available()){
+            inMsg += client.read();            
+          }
+          Serial.println(inMsg);
+          reading = false;
         }
-        reading = false;
+        prev = c;
       }
-      prev = c;
+    }
+    if (inMsg.startsWith("W")){
+      ;//TODO Doe iets met de tijd en de mogelijke reading
+    } 
+    if (inMsg.startsWith("E")){
+      Serial.println(inMsg);
+    }
+  }//endif (client.connected())
+  timeToWater = timeToWater - time;
+  if (timeToWater <= 0){
+    if (limitToWater == 0){
+      ;//TODO water geven
+    } else {
+      //TODO kijken of waarde wel of niet onder de limiet zit en dan wel of geen water geven
     }
   }
   //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd. Moet altijd onderin de loop staan
