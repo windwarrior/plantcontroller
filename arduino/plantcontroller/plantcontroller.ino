@@ -68,7 +68,9 @@ void loop(){
           Serial.println(inMsg);
           reading = false;
         }
-        prev = c;
+        if (!(c == '\r' && prev == '\n')){
+          prev = c;
+        }
       }
     }
     if (inMsg.startsWith("W")){
