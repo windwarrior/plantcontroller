@@ -8,36 +8,24 @@ IPAddress server(130,89,162,163);
 int port = 8000;
 int humidityPin = A0;
 //De tijd die tussen twee loops zit
-unsigned long time = 5000;
-int timeToWater;//Tijd die het duurt totdat de plant water gegeven moet worden
+unsigned long time = 60000;
+unsigned long timeToWater;//Tijd die het duurt totdat de plant water gegeven moet worden
 int limitToWater;//Limiet waaronder de plant water moet krijgen, indien 0 is er geen limiet.
 
 
 EthernetClient client;
 
 void setup(){
-    timeToWater = 32767; //Wordt hier op de maximale waarde van een integer geinitialiseerd
+    timeToWater = 4,294,967,295; //Wordt hier op de maximale waarde van een unsigned long geinitialiseerd
     limitToWater = 0;
     Serial.begin(9600);
     Serial.println("connecting..");
-    
     Ethernet.begin(mac);
-    client.connect(server,port);
-    delay(1000);
-    if (!client.connected()) {
-      Serial.println();
-      Serial.println("disconnecting.");
-      client.stop();
-      for(;;)
-      ;
-    } else {
-      Serial.println("connected");
-    }
-
 }
 
 void loop(){
   unsigned long beginTime = millis();
+  connectToServer();
   String humidityMsg = "";
   measureHumidity(&humidityMsg);
   if(client.connected()){
@@ -45,9 +33,9 @@ void loop(){
     Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
     client.println("Host: 130.89.165.27");
-//    client.println("Connection: close");
+    client.println("Connection: close");
     client.println("Content-Type: application/x-www-form-urlencoded");
-    client.println("Content-Length: " + humidityMsg.length());
+    client.println("Content-Length: " + String(humidityMsg.length()));
     client.println();
     client.println(humidityMsg);
     while (!client.available()){
@@ -60,10 +48,9 @@ void loop(){
       if (client.available()){
         char c = client.read();
         Serial.print(c);
-        if (prev == c && c == '\r'){
-          Serial.println("debug1");
+        if (prev == c && c == '\n'){
           while(client.available()){
-            inMsg += client.read();            
+            inMsg += char(client.read());            
           }
           Serial.println(inMsg);
           reading = false;
@@ -74,7 +61,13 @@ void loop(){
       }
     }
     if (inMsg.startsWith("W")){
+      if (inMsg.indexOf("<") != -1){
+        ;
+      } else {
+        timeToWater = stringToInt(inMsg.substring(2));
+        Serial.println(timeToWater);        
       ;//TODO Doe iets met de tijd en de mogelijke reading
+      }
     } 
     if (inMsg.startsWith("E")){
       Serial.println(inMsg);
@@ -88,6 +81,7 @@ void loop(){
       //TODO kijken of waarde wel of niet onder de limiet zit en dan wel of geen water geven
     }
   }
+  client.stop();
   //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd. Moet altijd onderin de loop staan
   unsigned long endTime = millis();
   unsigned long duration = endTime - beginTime;
@@ -120,14 +114,66 @@ void generatePostMessage(String * msg, String keys[], String vals[], int len){
     key_repl.replace(' ', '+');
     String val_repl = vals[i];
     val_repl.replace(' ', '+');
-    *msg = *msg + key_repl + "=" + val_repl;
+    *msg = *msg + key_repl + '=' + val_repl;
     if(i < len - 1){
-      *msg = *msg  + "&";
+      *msg = *msg  + '&';
     }
   }
 }
 
+void connectToServer(){  
+    client.connect(server,port);
+    delay(1000);
+    if (!client.connected()) {
+      Serial.println();
+      Serial.println("disconnecting.");
+      client.stop();
+      for(;;)
+      ;
+    } else {
+      Serial.println("connected");
+    }
+}
 
+int stringToInt(String msg){
+  int result = 0;
+  while (msg.length() != 0){
+    result = result * 10;
+    if (msg.charAt(0) == '0'){
+      result += 0;
+    }
+    if (msg.charAt(0) == '1'){
+      result += 1;
+    }
+    if (msg.charAt(0) == '2'){
+      result += 2;
+    }
+    if (msg.charAt(0) == '3'){
+      result += 3;
+    }
+    if (msg.charAt(0) == '4'){
+      result += 4;
+    }
+    if (msg.charAt(0) == '5'){
+      result += 5;
+    }
+    if (msg.charAt(0) == '6'){
+      result += 6;
+    }
+    if (msg.charAt(0) == '7'){
+      result += 7;
+    }
+    if (msg.charAt(0) == '8'){
+      result += 8;
+    }
+    if (msg.charAt(0) == '9'){
+      result += 9;
+    }
+    msg = msg.substring(1);
+  }
+  return result;
+
+}
 
 
 
