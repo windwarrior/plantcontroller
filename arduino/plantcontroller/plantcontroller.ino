@@ -1,7 +1,9 @@
 
 #include <Ethernet.h>
 #include <SPI.h>
+#include <Servo.h> 
 
+Servo servo;
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };
 IPAddress server(130,89,162,163);
 //De poort waar de server op luistert
@@ -16,6 +18,7 @@ int limitToWater;//Limiet waaronder de plant water moet krijgen, indien 0 is er 
 EthernetClient client;
 
 void setup(){
+    servo.attach(9);
     timeToWater = 4,294,967,295; //Wordt hier op de maximale waarde van een unsigned long geinitialiseerd
     limitToWater = 0;
     Serial.begin(9600);
@@ -62,11 +65,11 @@ void loop(){
     }
     if (inMsg.startsWith("W")){
       if (inMsg.indexOf("<") != -1){
-        ;
+        int split = inMsg.indexOf("<");
+        timeToWater = stringToInt(inMsg.substring(2,split));
+        limitToWater = stringToInt(inMsg.substring(split+1));
       } else {
         timeToWater = stringToInt(inMsg.substring(2));
-        Serial.println(timeToWater);        
-      ;//TODO Doe iets met de tijd en de mogelijke reading
       }
     } 
     if (inMsg.startsWith("E")){
@@ -78,7 +81,9 @@ void loop(){
     if (limitToWater == 0){
       ;//TODO water geven
     } else {
-      //TODO kijken of waarde wel of niet onder de limiet zit en dan wel of geen water geven
+      if(humidityReading(10) < limitToWater){
+        //TODO water geven
+      }
     }
   }
   client.stop();
@@ -91,12 +96,8 @@ void loop(){
 }
 
 void measureHumidity(String * msg){
-  int values = 0;
   int samples = 10; // Het aantal samples wat gemeten wordt
-  for(int i = 0; i < samples; i++){
-    values = values + analogRead(humidityPin);
-  }
-  int reading = values / samples; 
+  int reading = humidityReading(samples);
   String valReading = String(reading);
   String valSensor = "humidity";
   String valSamples = String(samples);
@@ -105,6 +106,15 @@ void measureHumidity(String * msg){
   String keys[] = {"reading","sensortype","samples","source"};
   generatePostMessage(msg,keys,vals,4);
 }
+
+int humidityReading(int samples){
+  int values = 0;
+  for(int i = 0; i < samples; i++){
+    values = values + analogRead(humidityPin);
+  }
+  int reading = values / samples;
+  return reading;
+} 
   
   
 
