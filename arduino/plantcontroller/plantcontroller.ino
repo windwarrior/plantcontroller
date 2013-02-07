@@ -3,14 +3,12 @@
 #include <SPI.h>
 #include <Servo.h> 
 
-Servo servo;
-byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };
-IPAddress server(130,89,162,163);
-//De poort waar de server op luistert
-int port = 8000;
-int humidityPin = A0;
-//De tijd die tussen twee loops zit
-unsigned long time = 60000;
+Servo servo;//De servo die water moet geven
+byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };//MAC adres van het ethernet shield
+IPAddress server(130,89,162,163);//IP adres van de server
+int port = 8000;//De poort waar de server op luistert
+int humidityPin = A0;//De pin waar de humiditymeter op zit
+unsigned long time = 60000;//De tijd die tussen twee loops zit
 unsigned long timeToWater;//Tijd die het duurt totdat de plant water gegeven moet worden
 int limitToWater;//Limiet waaronder de plant water moet krijgen, indien 0 is er geen limiet.
 
@@ -94,7 +92,7 @@ void loop(){
     delay(time - duration);
   }
 }
-
+//Meet de humidity en maakt er een postmessage van
 void measureHumidity(String * msg){
   int samples = 10; // Het aantal samples wat gemeten wordt
   int reading = humidityReading(samples);
@@ -106,7 +104,7 @@ void measureHumidity(String * msg){
   String keys[] = {"reading","sensortype","samples","source"};
   generatePostMessage(msg,keys,vals,4);
 }
-
+//Meet de humidity met het gegeven aantal samples
 int humidityReading(int samples){
   int values = 0;
   for(int i = 0; i < samples; i++){
@@ -115,7 +113,6 @@ int humidityReading(int samples){
   int reading = values / samples;
   return reading;
 } 
-  
   
 
 void generatePostMessage(String * msg, String keys[], String vals[], int len){
@@ -130,7 +127,7 @@ void generatePostMessage(String * msg, String keys[], String vals[], int len){
     }
   }
 }
-
+//Verbindt met de server
 void connectToServer(){  
     client.connect(server,port);
     delay(1000);
@@ -144,7 +141,7 @@ void connectToServer(){
       Serial.println("connected");
     }
 }
-
+//Zet een string om naar een integer
 int stringToInt(String msg){
   int result = 0;
   while (msg.length() != 0){
