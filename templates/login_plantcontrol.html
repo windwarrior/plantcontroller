@@ -1,0 +1,50 @@
+{% extends "base_plantcontrol.html" %}
+{% block content %}
+<style>
+
+.form-well{
+    width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table{
+    margin: 0;
+}
+
+.login{
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    width: 220px;
+}
+
+    
+    
+
+</style>
+
+<div class="container">
+<form method="post" action="/plantcontroller/login/" class="login well">
+    <h2> Login </h2>
+    {% if form.errors %}
+    <p>Incorrect Username/Password, please try again</p>
+    {% endif %}
+    
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td><input id="id_username" type="text" name="username" maxlength="30" placeholder="Username"></td>
+        </tr>
+        <tr>
+            <td><input type="password" name="password" id="id_password" placeholder="Password"></td>
+        </tr>
+    </table>
+
+    <input type="submit" value="login" class="btn btn-large btn-primary"/>
+    <input type="hidden" name="next" value="/plantcontroller/" />
+</form>
+</div>
+</div>
+{% endblock %}
+

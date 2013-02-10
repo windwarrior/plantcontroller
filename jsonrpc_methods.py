@@ -1,5 +1,3 @@
-#TODO: Maybe JSON-RPC is way too difficult for our arduino to talk with, maybe just use regular easy posts
-
 from jsonrpc import jsonrpc_method
 import random, pytz
 from plantcontroller.models import SensorReading
@@ -48,7 +46,6 @@ def get_data_points(request, interval, datapoints, offset):
         this_dict["datapoint"] = this_point
         this_dict["time"] =  datapoint_time.strftime('%H:%M')
 
-        print this_dict
         result.append(this_dict)
 
     return result

@@ -1,10 +1,11 @@
-function Graph(canvasId, graphType, horDataPoints, vertDataPoints, interval, offset){
+function Graph(canvasId, graphType, horDataPoints, vertDataPoints, interval, offset, ratio){
     this.canvasId = canvasId;
     this.graphType = graphType;
     this.interval = interval;
     this.offset = offset;
     this.horDataPoints = horDataPoints;
     this.vertDataPoints = vertDataPoints;
+    this.ratio = ratio;
 
     this.update();
 
@@ -38,12 +39,12 @@ Graph.prototype.paintGrid = function(){
 //Functie die gecalled wordt om het grid te restoren
 Graph.prototype.update = function(){
     this.width = $(this.canvasId).parent().width();
-    this.height = Math.floor(this.width * 0.5);
+    this.height = Math.floor(this.width * this.ratio);
 
     $(this.canvasId).attr('width', this.width).attr('height', this.height);
 
-    this.borderHeight = 0.1 * this.height;
-    this.borderWidth = 0.1 * this.width;
+    this.borderHeight = this.height / (this.vertDataPoints + 2);
+    this.borderWidth = this.width / (this.horDataPoints + 2);
 
     this.graphWidth = (this.width - this.borderWidth*2);
     this.graphHeight =  (this.height - this.borderHeight*2); 
@@ -139,10 +140,9 @@ Graph.prototype.paintHorizontalLegenda = function(dataDict){
     ctx.textBaseline = 'middle';
 
     for (var i=0; i<this.dataDict.length; i++){
-        ctx.fillText(dataDict[i]["time"], this.widthUnit * (i) + this.borderWidth, this.height - 0.5 * this.borderHeight, this.widthUnit);
+        ctx.fillText(dataDict[i]["time"], this.widthUnit * (i) + this.borderWidth, this.height - 0.5 * this.borderHeight, this.widthUnit * 0.9);
     }
 
     ctx.stroke();  
-
 }
            

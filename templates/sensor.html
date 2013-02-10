@@ -1,0 +1,93 @@
+{% extends "base_plantcontrol.html" %}
+
+{% block head %}
+<script>
+    var graphs = 0;
+
+    $(window).load(function() { 
+        $.jsonRPC.setup({
+            endPoint: '/plantcontroller/jsonapi/',
+            namespace: ''
+        });
+    
+
+
+        graphs = [
+            new Graph("#hourlyhumidity", "humidity", 12, 8, 5, 0, 0.5),
+            new Graph("#dailyhumidity", "humidity", 48, 7, 30, 0, 0.2),
+        ]
+
+        $("#slider-threshold").slider({
+            orientation: "horizontal",
+            range: "min",
+            step: 1,
+            max: 1023,
+            value: 512,
+            slide: function(event, ui){
+                $("#slider-threshold-value").html(ui.value);
+
+            }
+        });
+
+        $("#slider-time").slider({
+            orientation: "horizontal",
+            range: "min",
+            step: 1,
+            max: 60,
+            value: 10
+        });
+    });
+
+    $(window).resize(function(){
+        for (var i=0; i<graphs.length; i++){
+            graphs[i].onResize();
+        }
+    });
+
+    var updateFunction = function() {
+        for (var i=0; i<graphs.length; i++){
+            graphs[i].updateData();
+        }
+    } 
+
+    var timer = $.timer(updateFunction);
+
+    timer.set({ time : 5000, autostart : true });
+
+</script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="row-fluid">
+                    <div class="span5">
+                        <div class="page-header">
+                            <h4> Hourly </h4>
+                        </div>
+                        <canvas id="hourlyhumidity"> </canvas>
+                    </div>
+                    <div class="span7">
+                       <div class="page-header">
+                            <h4> Control </h4>
+                       </div> 
+                       Current reading: <span id="slider-threshold-value" class="label label-success">0.00</span> 
+                       <div id="slider-threshold"></div>
+                       <div id="slider-time"></div> 
+                    </div>
+                 </div>
+                 <div class="row-fluid">
+                    <div class="span12">
+                        <div class="page-header">
+                            <h4> Daily </h4>
+                        </div> 
+                        <canvas id="dailyhumidity"> </canvas>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

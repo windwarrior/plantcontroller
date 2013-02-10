@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Plant Control</title>
+        <!-- Bootstrap -->
+        <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet" media="screen">
+        <link href="{{ STATIC_URL }}css/jquery.ui.css" rel="stylesheet" media="screen">
+        <script src="http://code.jquery.com/jquery-latest.js"></script>
+        <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+        <script src="{{ STATIC_URL }}js/graph.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery.jsonrpc.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery.timer.js"></script>
+        <script src="{{ STATIC_URL }}js/jquery.ui.js"></script>
+        {% block head %}
+        {% endblock %}
+
+    </head>
+    <body>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="#">Plant Control</a>
+                <ul class="nav">
+                    <li class="active"><a href="#">Humidity</a></li>
+                    <li><a href="#">Temperature</a></li>
+                    <li><a href="#">Light</a></li>
+                </ul>
+                <p class="navbar-text pull-right">
+                    {% if user.is_authenticated %}
+                        Logged in as {{ user }}
+                    {% else %}
+                        <a href="/plantcontroller/login" class="navbar-link">Login</a>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    {% block content %}
+    {% endblock %}    
+  </body>
+</html>
