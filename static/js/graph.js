@@ -64,7 +64,6 @@ Graph.prototype.updateData = function(){
     $.jsonRPC.request('getDataPoints', {
         params: [me.interval, me.horDataPoints, me.offset],
         success: function(result) {
-            console.log(result.result);
             me.update();
             me.drawGraph(result.result);
         },
@@ -98,20 +97,20 @@ Graph.prototype.drawGraph = function(dataDict){
         }
 
         ctx.stroke();        
-    }
 
-    for(var i=0; i<dataDict.length; i++){
-        var yPos = (this.borderHeight + this.graphHeight) - (dataDict[i]["datapoint"] * this.graphHeight);
-        ctx.beginPath();
-        ctx.arc(this.borderWidth + i * this.widthUnit, yPos, this.widthUnit * 0.1, 0, Math.PI * 2);
-        ctx.fillStyle = 'green';
-        ctx.fill();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = '#003300';
-        ctx.stroke();
-    }
+        for(var i=0; i<dataDict.length; i++){
+            var yPos = (this.borderHeight + this.graphHeight) - (dataDict[i]["datapoint"] * this.graphHeight);
+            ctx.beginPath();
+            ctx.arc(this.borderWidth + i * this.widthUnit, yPos, this.widthUnit * 0.1, 0, Math.PI * 2);
+            ctx.fillStyle = 'green';
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.strokeStyle = '#003300';
+            ctx.stroke();
+        }
 
-    this.paintHorizontalLegenda(dataDict);
+        this.paintHorizontalLegenda(dataDict);
+    }
 }
 
 Graph.prototype.paintVerticalLegenda = function(){
