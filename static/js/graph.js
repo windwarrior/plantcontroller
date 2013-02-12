@@ -62,7 +62,7 @@ Graph.prototype.updateData = function(){
     var me = this;
 
     $.jsonRPC.request('getDataPoints', {
-        params: [me.interval, me.horDataPoints, me.offset],
+        params: [me.graphType, me.interval, me.horDataPoints, me.offset],
         success: function(result) {
             me.update();
             me.drawGraph(result.result);
@@ -87,19 +87,19 @@ Graph.prototype.drawGraph = function(dataDict){
     ctx.lineWidth = 3;
     ctx.beginPath();
 
-    if(dataDict && dataDict.length > 0){
-        var yPos = (this.borderHeight + this.graphHeight) - (dataDict[0]["datapoint"] * this.graphHeight);
+    if(dataDict["points"] && dataDict["points"].length > 0){
+        var yPos = (this.borderHeight + this.graphHeight) - (dataDict["points"][0]["datapoint"]/dataDict["adc_max"] * this.graphHeight);
         ctx.moveTo(this.borderWidth, yPos);
     
-        for(var j=1; j<dataDict.length; j++){
-            var newyPos = (this.borderHeight + this.graphHeight) - (dataDict[j]["datapoint"] * this.graphHeight);
+        for(var j=1; j<dataDict["points"].length; j++){
+            var newyPos = (this.borderHeight + this.graphHeight) - (dataDict["points"][j]["datapoint"]/dataDict["adc_max"] * this.graphHeight);
             ctx.lineTo(this.borderWidth + j * this.widthUnit, newyPos);            
         }
 
         ctx.stroke();        
 
-        for(var i=0; i<dataDict.length; i++){
-            var yPos = (this.borderHeight + this.graphHeight) - (dataDict[i]["datapoint"] * this.graphHeight);
+        for(var i=0; i<dataDict["points"].length; i++){
+            var yPos = (this.borderHeight + this.graphHeight) - (dataDict["points"][i]["datapoint"]/dataDict["adc_max"] * this.graphHeight);
             ctx.beginPath();
             ctx.arc(this.borderWidth + i * this.widthUnit, yPos, this.widthUnit * 0.1, 0, Math.PI * 2);
             ctx.fillStyle = 'green';
@@ -138,8 +138,8 @@ Graph.prototype.paintHorizontalLegenda = function(dataDict){
     ctx.fillStyle = 'black';
     ctx.textBaseline = 'middle';
 
-    for (var i=0; i<this.dataDict.length; i++){
-        ctx.fillText(dataDict[i]["time"], this.widthUnit * (i) + this.borderWidth, this.height - 0.5 * this.borderHeight, this.widthUnit * 0.9);
+    for (var i=0; i<this.dataDict["points"].length; i++){
+        ctx.fillText(dataDict["points"][i]["time"], this.widthUnit * (i) + this.borderWidth, this.height - 0.5 * this.borderHeight, this.widthUnit * 0.9);
     }
 
     ctx.stroke();  

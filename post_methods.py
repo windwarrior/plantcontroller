@@ -22,7 +22,7 @@ def add_data_point(request):
                     sensortypes = [SensorType(name=sensortype,unit_type='u', scale_type='u', trigger=None)]
                     sensortypes[0].save()
 
-                reading = SensorReading(reading=(reading/1023.0), datetime=datetime.utcnow().replace(tzinfo=utc), samples=samples, sensortype=sensortypes[0], source=source)
+                reading = SensorReading(reading=reading, datetime=datetime.utcnow().replace(tzinfo=utc), samples=samples, sensortype=sensortypes[0], source=source)
                 reading.save()
             else:
                 return HttpResponse("E:Some values not defined")

@@ -53,7 +53,7 @@ A single datapoint taken from a sensor
 """
 class SensorReading(models.Model):
     #Should be a reading between 0.0 and 1.0, probably the ADC reading divided by the ADC resolution
-    reading = models.FloatField()
+    reading = models.IntegerField()
 
     #The date and time that this reading was made
     #Should be updated every minute, could differ slightly
@@ -88,7 +88,7 @@ class ActuatorTrigger(models.Model):
     
     date_end = models.DateTimeField(blank = True, null = True)
 
-    below_value = models.FloatField()
+    below_value = models.IntegerField()
 
     for_minutes = models.IntegerField()
 
@@ -98,4 +98,7 @@ class ActuatorTrigger(models.Model):
     sensortype = models.ForeignKey(SensorType)
 
     def as_dict(self):
-        return {"threshold": self.below_value * 1023, "delay": self.for_minutes}
+        return {"threshold": self.below_value, "delay": self.for_minutes}
+
+    def __unicode__(self):
+        return "[{0}] value < {1} for {2} minutes".format("Active" if self.date_end == None else "Inactive", self.below_value, self.for_minutes)
