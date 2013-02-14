@@ -28,9 +28,9 @@ void setup(){
 void loop(){
   unsigned long beginTime = millis();
   connectToServer();
-  String humidityMsg = "";
-  measureHumidity(&humidityMsg);
   if(client.connected()){
+    String humidityMsg = "";
+    measureHumidity(&humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
     client.println("Host: 130.89.165.27");
     client.println("Connection: close");
@@ -74,12 +74,14 @@ void loop(){
       Serial.println(inMsg);
     }
   }//endif (client.connected())
+  client.stop();
   timeToWater = timeToWater - time;
   if (timeToWater <= 0){
     if (limitToWater == 0){
       servo.write(100);
       delay(10000);
       servo.write(10);
+      timeToWater = 4,294,967,295;
     } else {
       if(humidityReading(10) < limitToWater){
         servo.write(100);
@@ -88,7 +90,6 @@ void loop(){
       }
     }
   }
-  client.stop();
   //Zorgt ervoor dat de loop elke time milliseconden wordt uitgevoerd. Moet altijd onderin de loop staan
   unsigned long endTime = millis();
   unsigned long duration = endTime - beginTime;
