@@ -31,8 +31,6 @@ void loop(){
   String humidityMsg = "";
   measureHumidity(&humidityMsg);
   if(client.connected()){
-    Serial.println(humidityMsg.length());
-    Serial.println(humidityMsg);
     client.println("POST /plantcontroller/api/add/ HTTP/1.1");
     client.println("Host: 130.89.165.27");
     client.println("Connection: close");
@@ -65,10 +63,10 @@ void loop(){
     if (inMsg.startsWith("W")){
       if (inMsg.indexOf("<") != -1){
         int split = inMsg.indexOf("<");
-        timeToWater = stringToInt(inMsg.substring(2,split));
-        limitToWater = stringToInt(inMsg.substring(split+1));
+        timeToWater = inMsg.substring(2,split).toInt();
+        limitToWater = inMsg.substring(split+1).toInt();
       } else {
-        timeToWater = stringToInt(inMsg.substring(2));
+        timeToWater = inMsg.substring(2).toInt();
         limitToWater = 0;
       }
     } 
@@ -120,7 +118,7 @@ int humidityReading(int samples){
   return reading;
 } 
   
-
+//Genereert een http postmessage
 void generatePostMessage(String * msg, String keys[], String vals[], int len){
   for(int i =0; i<len; i++){
     String key_repl = keys[i];
@@ -147,46 +145,7 @@ void connectToServer(){
       Serial.println("connected");
     }
 }
-//Zet een string om naar een integer
-int stringToInt(String msg){
-  int result = 0;
-  while (msg.length() != 0){
-    result = result * 10;
-    if (msg.charAt(0) == '0'){
-      result += 0;
-    }
-    if (msg.charAt(0) == '1'){
-      result += 1;
-    }
-    if (msg.charAt(0) == '2'){
-      result += 2;
-    }
-    if (msg.charAt(0) == '3'){
-      result += 3;
-    }
-    if (msg.charAt(0) == '4'){
-      result += 4;
-    }
-    if (msg.charAt(0) == '5'){
-      result += 5;
-    }
-    if (msg.charAt(0) == '6'){
-      result += 6;
-    }
-    if (msg.charAt(0) == '7'){
-      result += 7;
-    }
-    if (msg.charAt(0) == '8'){
-      result += 8;
-    }
-    if (msg.charAt(0) == '9'){
-      result += 9;
-    }
-    msg = msg.substring(1);
-  }
-  return result;
 
-}
 
 
 
