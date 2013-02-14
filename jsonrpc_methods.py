@@ -51,6 +51,7 @@ def get_data_points(request, sensortype, interval, datapoints, offset):
 
             result.append(this_dict)
 
+
         return {"points": result, "adc_max": 1023}
 
     return {"points": [], "adc_max": 0}
