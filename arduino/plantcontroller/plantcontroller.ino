@@ -17,7 +17,9 @@ EthernetClient client;
 
 void setup(){
     servo.attach(9);
-    servo.write(10);
+    servo.write(100);
+    delay(10000);
+    servo.write(0);
     timeToWater = 4,294,967,295; //Wordt hier op de maximale waarde van een unsigned long geinitialiseerd
     limitToWater = 0;
     Serial.begin(9600);
@@ -78,15 +80,15 @@ void loop(){
   timeToWater = timeToWater - time;
   if (timeToWater <= 0){
     if (limitToWater == 0){
-      servo.write(100);
+      servo.write(0);
       delay(10000);
-      servo.write(10);
+      servo.write(100);
       timeToWater = 4,294,967,295;
     } else {
       if(humidityReading(10) < limitToWater){
-        servo.write(100);
+        servo.write(0);
         delay(10000);
-        servo.write(10);
+        servo.write(100);
       }
     }
   }
@@ -146,9 +148,3 @@ void connectToServer(){
       Serial.println("connected");
     }
 }
-
-
-
-
-
-
