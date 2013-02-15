@@ -21,7 +21,7 @@
         graphHourlyHumidity = new Graph("#hourlyhumidity", "humidity", 12, 8, 5, 0, 0.5),
         graphDailyHumidity = new Graph("#dailyhumidity", "humidity", 48, 7, 30, 0, 0.2),
         
-
+        // New slider for the threshold values
         $("#slider-threshold").slider({
             orientation: "horizontal",
             range: "min",
@@ -34,7 +34,8 @@
 
             }
         });
-
+        
+        // New slider for the delay value
         $("#slider-time").slider({
             orientation: "horizontal",
             range: "min",
@@ -47,6 +48,7 @@
             }
         });
 
+        // Set the sliders and corresponding spans with the data of the current Trigger
         $.jsonRPC.request('getCurrentActuatorTrigger', {
             params: ["humidity"],
             success: function(result) {
@@ -67,6 +69,7 @@
             }
         });
 
+        // Update all the relevant elements with data from a trigger
         $(function(delay, threshold, adc_max) {
             setSlider = function(delay, threshold, adc_max){
                 $("#slider-time").slider("value", delay);
@@ -80,6 +83,7 @@
             }
         });
 
+        // On save, store the newly defined trigger
         $("#save-button").click(function(event){
             console.log(threshold + " " + delay)
             $.jsonRPC.request('storeActuatorTrigger', {
@@ -94,6 +98,7 @@
             });
         });
 
+        // On error, show it, and make it go away after 5 seconds.
         $(function(alerttype, message) {
             showStatus = function(alerttype, message){
                 $("#status-alert").addClass("alert-" + alerttype);                   

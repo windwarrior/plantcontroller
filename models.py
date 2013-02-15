@@ -93,7 +93,7 @@ class ActuatorTrigger(models.Model):
     for_minutes = models.IntegerField()
 
     #The trigger that measures whether to enable the actuator related to this sensor
-    #TODO: when triggered, is a cooldown required?
+
     #TODO: what about toggleable systems like heaters
     sensortype = models.ForeignKey(SensorType)
 
