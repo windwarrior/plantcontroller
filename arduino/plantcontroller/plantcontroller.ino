@@ -3,18 +3,18 @@
 #include <SPI.h>
 #include <Servo.h> 
 
-Servo servo;//De servo die water moet geven
-byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };//MAC adres van het ethernet shield
-IPAddress server(130,89,162,163);//IP adres van de server
-int port = 8000;//De poort waar de server op luistert
-int humidityPin = A0;//De pin waar de humiditymeter op zit
-unsigned long time = 60000;//De tijd die tussen twee loops zit
-unsigned long timeToWater;//Tijd die het duurt totdat de plant water gegeven moet worden
-int limitToWater;//Limiet waaronder de plant water moet krijgen, indien 0 is er geen limiet.
+Servo servo;                                          //De servo die water moet geven
+byte mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x00, 0x0D };  //MAC adres van het ethernet shield
+IPAddress server(130,89,162,163);                     //IP adres van de server
+int port = 8000;                                      //De poort waar de server op luistert
+int humidityPin = A0;                                 //De pin waar de humiditymeter op zit
+unsigned long time = 60000;                           //De tijd die tussen twee loops zit
+unsigned long timeToWater;                            //Tijd die het duurt totdat de plant water gegeven moet worden
+int limitToWater;                                     //Limiet waaronder de plant water moet krijgen, indien 0 is er geen limiet.
 
 
-EthernetClient client;
-
+EthernetClient client;                                //Het ethernetshield
+//Start de servo en het Ethernetshield, zet een serial verbinding op en zet enkele variabelen op
 void setup(){
     servo.attach(9);
     servo.write(100);
