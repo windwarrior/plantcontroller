@@ -8,9 +8,9 @@ void setup() {
 }
 
 void loop() {
-  myservo.write(100);
+  myservo.write(90);
   delay(10000);
-  myservo.write(10);
+  myservo.write(35);
   delay(10000);
   
 }
