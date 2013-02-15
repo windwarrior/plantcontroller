@@ -7,6 +7,6 @@ def require_ip(ips):
             if(request.META['REMOTE_ADDR'] in ips):
                 return func(request, *args, **kwargs)
             else:
-                return HttpResponse("Acces Denied")
+                return HttpResponse("E:Acces Denied")
         return check_ip
     return decorator

@@ -2,7 +2,8 @@
 
 {% block head %}
 <script>
-    var graphs = 0;
+    var graphHourlyHumidity = 0;
+    var graphDailyHumidity = 0;
     var delay = 0;
     var threshold = 0;
     var adc_max = 0;
@@ -17,10 +18,9 @@
     
 
 
-        graphs = [
-            new Graph("#hourlyhumidity", "humidity", 12, 8, 5, 0, 0.5),
-            new Graph("#dailyhumidity", "humidity", 48, 7, 30, 0, 0.2),
-        ]
+        graphHourlyHumidity = new Graph("#hourlyhumidity", "humidity", 12, 8, 5, 0, 0.5),
+        graphDailyHumidity = new Graph("#dailyhumidity", "humidity", 48, 7, 30, 0, 0.2),
+        
 
         $("#slider-threshold").slider({
             orientation: "horizontal",
@@ -108,23 +108,21 @@
             }
         });
 
+        graphHourlyHumidity.updateData();
+        graphDailyHumidity.updateData();
+
     });
 
     $(window).resize(function(){
-        for (var i=0; i<graphs.length; i++){
-            graphs[i].onResize();
-        }
+        graphHourlyHumidity.onResize();
+        graphDailyHumidity.onResize();
     });
 
-    var updateFunction = function() {
-        for (var i=0; i<graphs.length; i++){
-            graphs[i].updateData();
-        }
-    } 
 
-    var timer = $.timer(updateFunction);
-
-    timer.set({ time : 5000, autostart : true });
+    var timerHourly = $.timer(function() {graphHourlyHumidity.updateData();});
+    var timerDaily = $.timer(function() {graphDailyHumidity.updateData();});
+    timerHourly.set({ time : 60000, autostart : true }); // update elke minuut
+    timerDaily.set({time : 300000, autostart: true }); // update elke 5 minuten
 
 </script>
 

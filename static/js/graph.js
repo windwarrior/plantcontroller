@@ -61,6 +61,8 @@ Graph.prototype.update = function(){
 Graph.prototype.updateData = function(){
     var me = this;
 
+    console.log("Updating! " + this.canvasId);
+
     $.jsonRPC.request('getDataPoints', {
         params: [me.graphType, me.interval, me.horDataPoints, me.offset],
         success: function(result) {
